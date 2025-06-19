@@ -1,21 +1,15 @@
 version: '3.8'
 services:
-  # Development app with hot reload
-  app-dev:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app-dev
+    container_name: test_app_docker_git_CiCd
     ports:
       - "3000:3000"
-      - "9229:9229"  # Debug port
     environment:
-      - NODE_ENV=development
-      - DEBUG=app:*
+      - NODE_ENV=production
+    restart: unless-stopped
     volumes:
-      - .:/usr/src/app          # Mount source code for hot reload
-      - /usr/src/app/node_modules  # Prevent overwriting node_modules
-
-
-volumes:
-  dev_data:
+      - .:/app          # Mount source code for hot reload
+      - /app/node_modules  # Prevent overwriting node_modules

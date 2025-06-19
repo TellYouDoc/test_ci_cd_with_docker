@@ -1,7 +1,11 @@
-FROM node:20-alpine
-WORKDIR /usr/src/app
+FROM node:22-alpine
+
+# Update Alpine packages to reduce vulnerabilities
+RUN apk update && apk upgrade --no-cache
+
+WORKDIR /app
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --only=production
 COPY . .
 EXPOSE 3000
 CMD ["node", "index.js"]

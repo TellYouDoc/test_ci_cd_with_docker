@@ -1,0 +1,29 @@
+name: Deploy to EC2 with Docker
+
+on:
+    push:
+        branches: [main, master]
+    pull_request:
+        branches: [main, master]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Deploy to EC2
+              uses: appleboy/ssh-action@v0.1.8
+              with:
+                host: ${{ secrets.EC2_HOST }}
+                username: ${{ secrets.EC2_USER }}
+                key: ${{ secrets.EC2_SSH_KEY }}
+                script: |
+                  cd /home/ubuntu/test-app-with-docker || git clone https://${{ secrets.GIT_TOKEN }}@github.com/TellYouDoc/test_ci_cd_with_docker.git /home/ubuntu/test-app-with-docker
+                  cd /home/ubuntu/test-app-with-docker
+                  git pull https://${{ secrets.GIT_TOKEN }}@github.com/TellYouDoc/test_ci_cd_with_docker.git main
+                  docker-compose down || true
+                  docker-compose up --build -d
+                  docker system prune -f
