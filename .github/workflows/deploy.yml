@@ -24,6 +24,18 @@ jobs:
                   cd /home/ubuntu/test-app-with-docker || git clone https://${{ secrets.GIT_TOKEN }}@github.com/TellYouDoc/test_ci_cd_with_docker.git /home/ubuntu/test-app-with-docker
                   cd /home/ubuntu/test-app-with-docker
                   git pull https://${{ secrets.GIT_TOKEN }}@github.com/TellYouDoc/test_ci_cd_with_docker.git main
-                  docker-compose down || true
-                  docker-compose up --build -d
+                  
+                  # Stop and remove containers completely
+                  docker-compose down --remove-orphans
+                  
+                  # Remove old images to force rebuild
+                  docker image prune -f
+                  
+                  # Build and start with fresh containers
+                  docker-compose up --build -d --force-recreate
+                  
+                  # Clean up unused Docker resources
                   docker system prune -f
+                  
+                  # Show running containers for verification
+                  docker ps
