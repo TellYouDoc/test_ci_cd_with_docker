@@ -1,5 +1,29 @@
-version: '3.8'
 services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
   app:
     build:
       context: .
@@ -9,7 +33,12 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - LOKI_HOST=http://loki:3100
+      - LOG_LEVEL=info
     restart: unless-stopped
     volumes:
       - .:/app          # Mount source code for hot reload
       - /app/node_modules  # Prevent overwriting node_modules
+
+volumes:
+  loki-data:

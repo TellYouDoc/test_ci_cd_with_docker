@@ -241,6 +241,56 @@ sudo usermod -aG docker ubuntu
 exit
 ```
 
+## 📊 Monitoring & Logging
+
+This application includes comprehensive monitoring and logging setup:
+
+### Prometheus Metrics
+
+- **Endpoint**: `http://localhost:9090`
+- Collects application metrics including HTTP requests, response times, and system metrics
+
+### Grafana Dashboard
+
+- **Endpoint**: `http://localhost:3001`
+- Visualizes metrics from Prometheus
+- Default credentials: admin/admin
+
+### Loki Logging
+
+- **Endpoint**: `http://localhost:3100`
+- Centralized log aggregation using Winston and Loki
+- Structured JSON logging with labels for easy querying
+
+### Winston Logger Features
+
+- Multiple log levels: error, warn, info, debug
+- Automatic error and exception handling
+- Request/response logging with metadata
+- Loki integration for log aggregation
+- Console output for development
+
+### Testing Logs
+
+Visit `http://localhost:3000/test-logs` to generate sample logs at different levels.
+
+### Log Structure
+
+```json
+{
+  "timestamp": "2025-07-12T10:30:00.000Z",
+  "level": "info",
+  "message": "HTTP Request",
+  "service": "test-app-docker",
+  "environment": "production",
+  "method": "GET",
+  "route": "/",
+  "status": 200,
+  "responseTime": 15.4,
+  "ip": "172.18.0.1"
+}
+```
+
 ## 📝 Common Commands
 
 ```bash
